@@ -136,7 +136,7 @@ export default function App() {
         if (operation === "add") res = val1 + val2;
         else if (operation === "sub") res = val1 - val2;
         else if (operation === "mul") res = val1 * val2;
-        else if (operation === "div") res = val2 !== 0 ? val1 / val2 : null;
+        else if (operation === "div") res = val2 !== 0 ? val1 / val2 : NaN;
 
         yResult.push(res);
       }
