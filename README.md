@@ -1,75 +1,39 @@
-# React + TypeScript + Vite
+# 📊 Simulador de Sinais e Sistemas
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Um aplicativo web interativo desenvolvido em **React**, **TypeScript** e **Vite** para visualização, transformação e operações com sinais de tempo contínuo e tempo discreto. O projeto foi construído para auxiliar estudantes na análise de conceitos fundamentais da disciplina de Sinais e Sistemas.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Funcionalidades
 
-## React Compiler
+- **📈 Dualidade de Domínios:** Alternância instantânea entre **Tempo Contínuo ($t$)** e **Tempo Discreto ($n$)**.
+- **🔄 Transformações na Variável Independente:**
+  - Ajuste de **Amplitude ($K$)** para amplificação ou rebatimento vertical.
+  - **Compressão/Inversão ($a$)** e **Deslocamento ($b$)** no tempo.
+  - **Gerador Automático de Sentença:** Converte a transformação aplicada em uma expressão matemática pronta para uso.
+- **➕ Operações Matemáticas entre Sinais:**
+  - Permite inserir dois sinais distintos ($x_1$ e $x_2$) e realizar operações de **Soma (+)**, **Subtração (-)**, **Multiplicação ($\times$)** e **Divisão ($\div$)**.
+  - Sistema de **visibilidade modular** (Checkboxes para ligar/desligar a exibição individual do Sinal 1, Sinal 2 e do Resultado).
+- **📐 Suporte a Degrau Unitário (`u`):** Avaliação precisa do degrau unitário customizado para criar sinais em escada e recortes temporais.
+- **🌙 Tema Escuro (Dark Mode):** Alternância fluida entre Modo Claro e Modo Escuro com adaptação automática das cores dos gráficos.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tecnologias Utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React** (Biblioteca de interface)
+- **TypeScript** (Tipagem estática)
+- **Vite** (Empacotador e servidor de desenvolvimento ultrarrápido)
+- **Math.js** (Motor de avaliação e compilação matemática com suporte a funções customizadas)
+- **Plotly.js** (Renderização nativa de gráficos de alta performance)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## ⚙️ Como Executar o Projeto Localmente
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Certifique-se de ter o **Node.js** instalado em sua máquina. Siga os passos abaixo:
 
-```
-
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+1. **Clone o repositório:**
+   ```bash
+   git clone [https://github.com/SEU-USUARIO/simulador-sinais-sistemas.git](https://github.com/SEU-USUARIO/simulador-sinais-sistemas.git)
+   ```
