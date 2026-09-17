@@ -11,28 +11,30 @@ export default function App() {
   const [isDiscrete, setIsDiscrete] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
-  // Estados - Aba 1: Transformações
-  const [equation, setEquation] = useState<string>(
-    "-u(t+2) + 2u(t+1) + 2u(t) - u(t-1) - 3u(t-2) + 2u(t-3) - u(t-4)",
-  );
-  const [k, setK] = useState<number>(2);
-  const [a, setA] = useState<number>(-1);
-  const [b, setB] = useState<number>(2);
+  const [equation, setEquation] = useState<string>("");
+  const [k, setK] = useState<number>(1);
+  const [a, setA] = useState<number>(1);
+  const [b, setB] = useState<number>(0);
 
-  // Estados - Aba 2: Operações
-  const [eq1, setEq1] = useState<string>("sin(t)");
-  const [eq2, setEq2] = useState<string>("u(t) - u(t-4)");
+  const [eq1, setEq1] = useState<string>("");
+  const [eq2, setEq2] = useState<string>("");
   const [operation, setOperation] = useState<"add" | "sub" | "mul" | "div">(
-    "mul",
+    "add",
   );
 
   const [showSignal1, setShowSignal1] = useState<boolean>(true);
   const [showSignal2, setShowSignal2] = useState<boolean>(true);
   const [showResult, setShowResult] = useState<boolean>(true);
 
+  const [systemPlotData, setSystemPlotData] = useState<{
+    x: number[];
+    y: number[];
+  } | null>(null);
+
   const chartDiv = useRef<HTMLDivElement>(null);
 
   const derivedEquation = useMemo(() => {
+    if (!equation) return "";
     const varUsed = equation.includes("n") ? "n" : "t";
     let transfArg = "";
     if (a === 1 && b === 0) transfArg = varUsed;
@@ -169,6 +171,17 @@ export default function App() {
             ? { marker: { color: "#3b82f6" }, width: 0.1 }
             : { line: { color: "#3b82f6", width: 2.5 } }),
         });
+    } else if (activeTab === "system" && systemPlotData) {
+      traces = [
+        {
+          x: systemPlotData.x,
+          y: systemPlotData.y,
+          type: "bar",
+          name: "Sinal Convoluído y[n]",
+          marker: { color: "#10b981" },
+          width: 0.1,
+        },
+      ];
     }
 
     const layout: any = {
@@ -178,13 +191,14 @@ export default function App() {
             ? "Transformações"
             : activeTab === "operations"
               ? "Operações"
-              : "Análise de Sistemas",
+              : "Análise de Sistemas e Convolução",
         font: { color: textColor },
       },
       autosize: true,
       font: { color: textColor },
       xaxis: {
-        title: isDiscrete ? "Amostras [n]" : "Tempo (t)",
+        title:
+          isDiscrete || activeTab === "system" ? "Amostras [n]" : "Tempo (t)",
         gridcolor: gridColor,
         zerolinecolor: textColor,
       },
@@ -211,6 +225,7 @@ export default function App() {
     showSignal1,
     showSignal2,
     showResult,
+    systemPlotData,
     isDarkMode,
   ]);
 
@@ -387,6 +402,7 @@ export default function App() {
           <TabSystemAnalysis
             defaultEq={derivedEquation}
             isDiscrete={isDiscrete}
+            onPlot={(x, y) => setSystemPlotData({ x, y })}
           />
         )}
 

@@ -26,42 +26,54 @@ export function sanitizarExpressao(expr: string): string {
 }
 
 export function analisarPropriedadesSistema(expr: string) {
-  const limpa = expr.toLowerCase();
+  const limpa = expr.toLowerCase().replace(/\s+/g, "").replace(/[−–]/g, "-");
 
-  // 1. Causalidadade: Detecta termos de avanço (futuro) como t+2 ou n+1
-  const temFuturo =
-    /[t|n]\s*\+\s*[1-9]/.test(limpa) || /[t|n]\s*\+\s*0\.[1-9]/.test(limpa);
+  const argInternos = limpa.match(/\([^)]+\)|\[[^\]]+\]/g) || [];
+  const arg = argInternos.join("");
 
-  // 2. Memória: Se depende de t ou n e possui deslocamentos ou operações dinâmicas
-  const temTempo = limpa.includes("t") || limpa.includes("n");
-  const temMemoria =
-    temTempo &&
-    (limpa.includes("+") ||
-      limpa.includes("-") ||
-      limpa.includes("*") ||
-      limpa.includes("/"));
+  const foraDoArg = limpa
+    .replace(/\([^)]+\)|\[[^\]]+\]/g, "")
+    .replace(/d\/d[tn]/g, "")
+    .replace(/(sin|cos|tan|exp|log|sqrt|int|tau|y|=|x)/g, "");
 
-  // 3. Linearidade: Sistemas com potências (ex: t^2, n^2), funções não-lineares (sin, cos, exp) ou produtos cruzados são Não-Lineares
-  const ehNaoLinear =
+  const avancoTempo = /[tn]\+[0-9]+/.test(arg);
+  const escalaTempo =
+    /[0-9]+\*?[tn]/.test(arg) || /\-[tn]/.test(arg) || /[tn]\/[0-9]+/.test(arg);
+  const instZero = arg.includes("0");
+
+  const integral = limpa.includes("∫") || limpa.includes("int");
+  const integralFuturo = integral && limpa.includes("t+");
+
+  const temFuturo = avancoTempo || escalaTempo || instZero || integralFuturo;
+
+  const deslocamento = /[tn][\+\-][0-9]+/.test(arg);
+  const temMemoria = deslocamento || escalaTempo || instZero || integral;
+
+  const somaConstante =
+    /[\+\-][0-9]+$/.test(foraDoArg) || /^[0-9]+[\+\-]/.test(foraDoArg);
+
+  const somaSinaisDistintos =
+    (limpa.includes("x(t)") || limpa.includes("x[n]")) &&
+    (limpa.includes("x(0)") || limpa.includes("x[0]"));
+
+  const naoLinear =
     limpa.includes("^") ||
-    limpa.includes("sin") ||
-    limpa.includes("cos") ||
     limpa.includes("exp") ||
     limpa.includes("log") ||
-    limpa.includes("sqrt");
-  const linear = !ehNaoLinear;
+    limpa.includes("sqrt") ||
+    limpa.includes("sin") ||
+    limpa.includes("cos") ||
+    somaConstante ||
+    somaSinaisDistintos;
 
-  // 4. Invariância no Tempo: Se a variável independente (t ou n) aparece multiplicada por um fator externo (ex: 2*t ou -t), o sistema é variante no tempo
-  // Exemplo variante: y(t) = t * u(t) ou y[n] = n * x[n]
-  const varianteNoTempo =
-    /\b[2-9]\s*\*\s*[tn]\b|\b[2-9][tn]\b|^\s*[tn]\s*\*/.test(limpa);
-  const invarianteNoTempo = !varianteNoTempo;
+  const tempoFora = /[tn]/.test(foraDoArg);
+  const invariante = !(tempoFora || escalaTempo || instZero);
 
   return {
     temMemoria,
     causal: !temFuturo,
-    linear,
-    invarianteNoTempo,
+    linear: !naoLinear,
+    invarianteNoTempo: invariante,
   };
 }
 
